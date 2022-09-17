@@ -9,7 +9,7 @@
 }
 
 body {
-    @apply bg-stone-200 overflow-x-hidden overflow-y-hidden;
+    @apply bg-stone-200 overflow-x-hidden;
 }
 
 html {
@@ -33,5 +33,5 @@ html {
 }
 
 .input {
-    @apply block w-full bg-transparent border-2 border-stone-300 px-2 py-1;
+    @apply block w-full bg-transparent border-2 border-stone-300 px-2 py-1 focus:border-red-700;
 }

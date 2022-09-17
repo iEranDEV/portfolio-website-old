@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed 0 h-screen w-8 md:w-32" :class="{'right-0': right}">
+    <div class="fixed 0 h-screen w-8 md:w-32 hidden md:block" :class="{'right-0': right}">
         <slot></slot>
     </div>
 </template>

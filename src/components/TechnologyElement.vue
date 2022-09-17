@@ -5,7 +5,7 @@
         </p>
         <p class="text-sm md:text-lg text-lime">{{ name }}</p>
         <div class="flex items-center">
-            <i v-for="index in 5" :key="index" class="fa-regular fa-star text-stone-400 text-xs md:text-md" :class="{'font-bold text-orange-300': stars >= index}"></i>
+            <i v-for="index in 5" :key="index" class="fa-regular fa-star text-stone-400 text-xs md:text-md" :class="{'font-bold text-orange-300': Number(stars) >= index}"></i>
         </div>
     </div>
 </template>
@@ -15,7 +15,7 @@
 export default {
     props: {
         name: String,
-        stars: Number
+        stars: String
     }
 }
 </script>

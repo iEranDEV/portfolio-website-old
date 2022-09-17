@@ -150,32 +150,6 @@
 								<a class="text-stone-500" href="https://github.com/iEranDEV/VisualMemory">(click)</a>
 							</div>
 						</div>
-
-						<!--
-						<div class="w-full flex flex-col">
-							<div class="border-b border-stone-300 py-2">
-								<h1 class="font-bold text-lg md:text-xl ">
-									To Do application 
-									<a class="text-stone-400 underline font-medium" href="https://github.com/iEranDEV/ToDo-application">(github)</a>
-								</h1>
-								<span class="text-xs md:text-sm ">
-									A simple application that allows users to add tasks, filtering them by importance, today's date and completion status. 
-									Additionally, user can create own categories and add tasks to them to better organize his time and work.
-								</span>
-							</div>
-
-							<div class="border-b border-stone-300 py-2">
-								<h1 class="font-bold text-lg md:text-xl">
-									Weather app
-									<a class="text-stone-400 underline font-medium" href="https://github.com/iEranDEV/WeatherApp">(github)</a>
-								</h1>
-								<span class="text-xs md:text-sm">
-									Simple application created using OpenWeatherMap. It allows users to check weather by providing city's name.
-								</span>
-							</div>
-						</div>
-
-						-->
 						<div class="w-full flex justify-end mt-4">
 							<button class="btn">
 								Check more on github
@@ -191,26 +165,30 @@
 				<template v-slot:header>05. Contact me</template>
 				<template v-slot:content>
 					<div class="w-full h-full flex flex-col">
-						<div class="w-full flex flex-col items-center px-2">
-							<div class="w-full xl:w-1/2">
-								<label for="email" class="text-stone-400">enter your e-mail address</label>
-								<input type="email" name="email" id="email" class="input" placeholder="example@gmail.com">
+						<form ref="form" @submit.prevent="sendEmail">
+							<div class="w-full flex flex-col items-center px-2">
+								<div class="w-full xl:w-1/2">
+									<label for="email" class="text-stone-400">enter your name</label>
+									<input type="email" name="email" id="email" class="input" placeholder="example@gmail.com">
+								</div>
+								<div class="w-full xl:w-1/2 mt-8 mb-8">
+									<label for="message" class="text-stone-400">enter your message</label>
+									<textarea name="message" id="message" cols="30" rows="8" class="input" placeholder="message..."></textarea>
+								</div>
 							</div>
-							<div class="w-full xl:w-1/2 mt-8 mb-8">
-								<label for="message" class="text-stone-400">enter your message</label>
-								<textarea name="message" id="message" cols="30" rows="8" class="input" placeholder="message..."></textarea>
+							<div class="w-full flex justify-end">
+								<button class="btn" type="submit">
+									Send message 
+									<i class="fa-regular fa-envelope text-stone-100"></i>
+								</button>
 							</div>
-						</div>
-						<div class="w-full flex justify-end">
-							<button class="btn">
-								Send message 
-								<i class="fa-regular fa-envelope text-stone-100"></i>
-							</button>
-						</div>
+						</form>
 					</div>
 				</template>
 			</section-element>
 		</div>
+
+		<notification-element :positive="positiveNotification"></notification-element>
 	</div>
 </template>
 
@@ -219,13 +197,13 @@ import HeaderElement from '@/components/static/HeaderElement.vue'
 import SideElement from '@/components/static/SideElement.vue'
 import SectionElement from '@/components/SectionElement.vue'
 import TechnologyElement from '@/components/TechnologyElement.vue'
+import NotificationElement from '@/components/static/NotificationElement.vue'
 
 import { ref } from 'vue';
+import emailjs from '@emailjs/browser';
 
 export default {
 	setup() {
-
-		console.log(process.env.NODE_ENV)
 	
 		const PAGES = ['main_section', 'about_section', 'technology_section', 'portfolio_section', 'contact_section'];
 		let CURRENT_PAGE = ref(0);
@@ -257,47 +235,14 @@ export default {
 
 		}, { passive: false });
 
-		let touchPos;
-
-		document.addEventListener('touchstart', (e) => {
-			e.preventDefault();
-			touchPos = e.changedTouches[0].clientY;
-		}, { passive: false })
-
-		document.addEventListener('touchmove', (e) => {
-			e.preventDefault();
-		}, { passive: false });
-
-		document.addEventListener('touchend', (e) => {
-			e.preventDefault();
-
-			if(TIMEOUT) {
-				TIMEOUT = false;
-				let newTouchPos = e.changedTouches[0].clientY;
-				if(newTouchPos > touchPos) {
-					if(CURRENT_PAGE.value != 0) {
-						let element = document.getElementById(PAGES[CURRENT_PAGE.value - 1]);
-						CURRENT_PAGE.value -= 1;
-						setTimeout(window.scrollTo(0, element.offsetTop),100)
-					}
-				} else if(newTouchPos < touchPos) {
-					if(CURRENT_PAGE.value != 4) {
-						let element = document.getElementById(PAGES[CURRENT_PAGE.value + 1]);
-						CURRENT_PAGE.value += 1;
-						setTimeout(window.scrollTo(0, element.offsetTop),100)
-					}
-				}
-
-				setTimeout(() => {
-					TIMEOUT = true;
-				}, 500)
-			}
-
-		}, { passive: false })
-
 		return {
 			CURRENT_PAGE,
 			PAGES,
+		}
+	},
+	data() {
+		return {
+			positiveNotification: true,
 		}
 	},
 	methods: {
@@ -305,13 +250,42 @@ export default {
 			let element = document.getElementById(this.PAGES[id]);
 			this.CURRENT_PAGE = id;
 			element.scrollIntoView();
+		},
+		sendEmail() {
+			emailjs.sendForm('service_lgpm9cr', 'template_gupbsq5', this.$refs.form, 'FkmGARS4SLBYangHK')
+				.then(() => {
+					this.positiveNotification = true;
+					let notification = document.getElementById('notification');
+					if(notification.classList.contains('hidden')) {
+						notification.classList.remove('hidden');
+						notification.classList.add('flex');
+					}
+					setTimeout(() => {
+						notification.classList.remove('flex');
+						notification.classList.add('hidden');
+					}, 3000)
+				}, () => {
+					this.positiveNotification = false;
+					let notification = document.getElementById('notification');
+					if(notification.classList.contains('hidden')) {
+						notification.classList.remove('hidden');
+						notification.classList.add('flex');
+					}
+					setTimeout(() => {
+						notification.classList.remove('flex');
+						notification.classList.add('hidden');
+					}, 3000)
+				});
+			document.getElementById('email').value = '';
+			document.getElementById('message').value = '';
 		}
 	},
 	components: {
 		HeaderElement,
 		SideElement,
 		SectionElement,
-		TechnologyElement
+		TechnologyElement,
+		NotificationElement
 	}
 }
 </script>
