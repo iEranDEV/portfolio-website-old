@@ -225,6 +225,8 @@ import { ref } from 'vue';
 export default {
 	setup() {
 
+		console.log(process.env.NODE_ENV)
+	
 		const PAGES = ['main_section', 'about_section', 'technology_section', 'portfolio_section', 'contact_section'];
 		let CURRENT_PAGE = ref(0);
 		let TIMEOUT = true;
